@@ -1,0 +1,12 @@
+include/*
+lib/*
+boost_1_42/*
+media/*
+programs/*
+!programs/3DGP_202109_03_FPS_Maze_template
+programs/3DGP_202109_03_FPS_Maze_template/*
+!programs/3DGP_202109_03_FPS_Maze_template/docs
+!programs/3DGP_202109_03_FPS_Maze_template/source
+programs/3DGP_202109_03_FPS_Maze_template/source/*
+!programs/3DGP_202109_03_FPS_Maze_template/source/*.cpp
+!programs/3DGP_202109_03_FPS_Maze_template/source/*.h
