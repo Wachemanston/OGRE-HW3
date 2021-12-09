@@ -656,10 +656,10 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 		flg_start = false;
 		for (i = 0; i < nx; i++) {
 			x = i*dx;
-			if ((b->at(i, j) > 0.5) && !b->gr(i, j-1, 0.5)) {
+			if ((b->at(i, j) > 0.5) && !b->gr(i, j+1, 0.5)) {
 				//cout << "..." << endl;
 				if (flg_start) {
-					if (b->gr(i+1, j, 0.5)) continue;
+					if (b->gr(i-1, j, 0.5)) continue;
 					if (i>=nx-1) {
 						v0 = Vector3(x+dx, 0, z+dz);
 						v3 = Vector3(x+dx, h, z+dz);
@@ -902,7 +902,8 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 		i3 = k+3;
 		addFace(i0, i1, i2);
 		addFace(i0, i2, i3);
-		//addFace(i0, i3, i2);
+		addFace(i2, i1, i0);
+		addFace(i2, i0, i3);
 	}
 	endFace();
 	/*bgnFace();

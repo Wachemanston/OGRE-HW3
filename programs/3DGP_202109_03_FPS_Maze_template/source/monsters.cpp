@@ -40,11 +40,12 @@ void MONSTER::update(const Ogre::FrameEvent& evt)
 
 	mTime += dt+dt*(5*mRandSpeed);
 	Vector3 offset(0, 0, 0);
-	offset.y = mAmplitude*sin(mTime);
+	offset.y = sin(mTime);
 	if (mTime > 3.14159*2) {
 		mTime -= 3.14159*2;
 	}
 
+	mVelocity.normalise();
     mSceneNode->setPosition(mSceneNode->getPosition() + mVelocity + offset);
 	updateViewDirection();
 }

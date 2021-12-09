@@ -53,21 +53,17 @@ bool WEAPON::hitTarget_Sphere(
 {
 	bool flg = false;
 	Vector3 pos = mSceneNode->getPosition();
+	// B.7
+	Vector3 N = pos - p;
+	N.normalise();
 	if ( r >= pos.distance( p ) ) {
-        // the weapon overlaps with the sphere.
-        // does this imply 'hit'?
-        //
-        // 
-        //
-        // Check if hitting...
-		//if ( 0.0 >= d ) {
-            // the weapon hits the target
-            // Perform collision response
-			// Compute a new mVelocity;
-            // Play a sound?
-            // Play a particle system?
-            //
-        //}
+        Real d = mVelocity.dotProduct(N);
+        if ( 0.0 >= d ) {
+			mVelocity = mVelocity.reflect(N); 
+            SOUND_MANAGER::getInstance()->play_Explosion();
+            wpsMgr->play(pos);
+        }
+
 		flg = true;
 	}
 	return flg;
@@ -75,16 +71,16 @@ bool WEAPON::hitTarget_Sphere(
 
 void WEAPON::update(const Ogre::FrameEvent& evt)
 {
-		mLifeTime -= evt.timeSinceLastFrame;
+	mLifeTime -= evt.timeSinceLastFrame;
 	if (mLifeTime < 0 ) {
 		mLifeTime = 0;
 		mSceneNode->setVisible(false);
-	mIsAlive = false;
-	return;
+		mIsAlive = false;
+		return;
 	}
-Real t = evt.timeSinceLastFrame;
+	Real t = evt.timeSinceLastFrame;
 	Vector3 pos = mSceneNode->getPosition();
-	pos += mVelocity*t;
+	pos += mVelocity*mSpeedFactor*t;
 
 	Vector3 grav(0,-29.8, 0);
 	mVelocity += grav*t;
@@ -92,12 +88,14 @@ Real t = evt.timeSinceLastFrame;
 	Vector3 new_pos = pos;
 	Real r = 5;
 	new_pos -= Vector3(0, 1, 0)*r;
+	// B.5
+    bool flg = projectScenePointOntoTerrain_PosDirection(new_pos);
+    if (flg) {
+        pos = new_pos+Vector3(0,1.0, 0)+Vector3(0, 1, 0)*r;
+        mVelocity.y = -mVelocity.y*0.9; // damp velocity
+    }
 
-    // Do collision check and collision response with the terrain.
-    //
-    // Add your own stuff
-    //
-mSceneNode->setPosition(pos);
+	mSceneNode->setPosition(pos);
 }
 
 //
@@ -108,12 +106,10 @@ mSceneNode->setPosition(pos);
 void WEAPON::adjustDueToMap( )
 {
     Vector3 pos = mSceneNode->getPosition( );
-Vector3 n = MAP_MANAGER::getGridNormalVector(pos.x, pos.z );
-        Real len = n.length( );
-        if ( len!=0.0) {
-            // Modify mVelocity based on the normal vector, n
-
-            //  cout << "normal:" << n.x << "\t" << n.y << "\t" << n.z << endl;
-
-        }
+	Vector3 n = MAP_MANAGER::getGridNormalVector(pos.x, pos.z );
+    Real len = n.length();
+    if (len != 0.0) {
+		// B.6
+        mVelocity = mVelocity.reflect(n);
+    }
 }

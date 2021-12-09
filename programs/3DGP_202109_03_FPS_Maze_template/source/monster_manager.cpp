@@ -23,9 +23,10 @@ MONSTER_MANAGER::MONSTER_MANAGER(SceneManager *a_SceneMgr): GAME_OBJ(a_SceneMgr)
         // Set the scale.
         // Use 
 
-        mMonstersArr[i]->setPosition(Vector3(Math::Floor(rand() % range), Math::Floor(rand() % range), Math::Floor(rand() % range)));
+        mMonstersArr[i]->setInitPosition(Vector3(Math::Floor(rand() % range), Math::Floor(rand() % range), Math::Floor(rand() % range)));
         // mMonstersArr[i]->setInitPosition( ... )
-        mMonstersArr[i]->scale( 1, 1, 1 );
+		int scale = DATA_READER::getMeshScale();
+        mMonstersArr[i]->scale(scale, scale, scale);
 
     }
 
@@ -100,8 +101,8 @@ void MONSTER_MANAGER::resolveMonsterCollision()
 			if (p0.distance(p1) <= collision_range) {
 				Vector3 dir = p0 - p1;
 				dir.normalise();
-				mMonstersArr[i]->setPosition(p0 + dir * back_unit);
-				mMonstersArr[j]->setPosition(p0 - dir * back_unit);
+				//mMonstersArr[i]->setPosition(p0 + dir * back_unit);
+				//mMonstersArr[j]->setPosition(p0 - dir * back_unit);
 			}
         }
 	}

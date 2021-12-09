@@ -225,10 +225,10 @@ void MAIN_CHAR::fireWeapon()
 	Vector3 direction;
 	if (mFireActionMode&FIRE_ACTION_NORMAL)
 	{
-		//pos = getWeaponPosition();
-		//direction = mCamera->getRealDirection();
-		//mWeaponMgr->fire_Normal(pos, direction);
-		//mFireActionMode ^= FIRE_ACTION_NORMAL;
+		pos = getWeaponPosition();
+		direction = mCamera->getRealDirection();
+		mWeaponMgr->fire_Normal(pos, direction);
+		mFireActionMode ^= FIRE_ACTION_NORMAL;
 	}
 }
 
@@ -243,15 +243,16 @@ void MAIN_CHAR::fireWeapon()
     // Play sound
     // Level up
     //
-	void MAIN_CHAR::setFireAction_Normal()
-	{
-        //
-        static int count = 0;
-        count++;
-        if (count%10==0) {
-
-            ++mLevel;
-        }
-        //
-		mFireActionMode |= FIRE_ACTION_NORMAL;
-	}
+void MAIN_CHAR::setFireAction_Normal()
+{
+    //
+    static int count = 0;
+    count++;
+    if (count%10==0) {
+		// B.4
+		SOUND_MANAGER::getInstance()->play_LevelUp();
+        ++mLevel;
+    }
+    //
+	mFireActionMode |= FIRE_ACTION_NORMAL;
+}

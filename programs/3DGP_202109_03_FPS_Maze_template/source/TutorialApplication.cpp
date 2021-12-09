@@ -94,6 +94,15 @@ bool BasicTutorial_00::keyPressed( const OIS::KeyEvent &arg )
 		mCameraDistanceSlowDownSpeed = 0;
 
 	}
+	// B.1
+	if (arg.key == OIS::KC_F1) {
+		mMainChar->setPosition_to_Environment(Vector3(860, 51, 751));
+	}
+	// B.2
+	if (arg.key == OIS::KC_F2) {
+		mMainChar->setPosition_to_Environment(Vector3(4612, 41, 4529));
+	}
+
 	return flg;
 }
 

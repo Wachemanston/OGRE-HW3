@@ -76,7 +76,9 @@ bool GAME_OBJ::isAlive() const
 
 void GAME_OBJ::update(const Ogre::FrameEvent& evt)
 {
-
+	if (!isAlive()) return;
+	Vector3 v = mSpeedFactor * mVelocity;	
+	mSceneNode->setPosition(mSceneNode->getPosition() + v);
 }
 
 void GAME_OBJ::createGameObj(const String &a_Name, const String &a_MeshName)

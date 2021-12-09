@@ -43,8 +43,9 @@ void WeaponParticleSystemManager::play(int pIndex, const Vector3 &p)
 // cycle to reuse particle systems.
 void WeaponParticleSystemManager::play(const Vector3 &p)
 {
-    //setOffParticleSystem(mCurIndex, p);
-    //mCurIndex = (mCurIndex+1)%mNumParticleSystems;
+	// B.7
+    setOffParticleSystem(mCurIndex, p);
+    mCurIndex = (mCurIndex+1) % mNumParticleSystems;
 }
 
 

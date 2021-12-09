@@ -51,30 +51,28 @@ void WEAPON_MANAGER::setMaxBulletsNum(int a_Num)
 //
 void WEAPON_MANAGER::fire_Normal(const Vector3 &pos, const Vector3 &direction)
 {
-
-GAME_OBJ *g = 0;
-for (int i = 0; i < mCurBulletsNum; ++i) {
-    // Check if a weapon is not used
+	GAME_OBJ *g = 0;
+	for (int i = 0; i < mCurBulletsNum; ++i) {
+		// Check if a weapon is not used
 		if (mUsedWeaponsArr[i] == true) continue;
-g = mBulletsArr[i];
-mUsedWeaponsArr[i] = true;
-break;
-}
-if (g == 0) return;
+		g = mBulletsArr[i];
+		mUsedWeaponsArr[i] = true;
+		break;
+	}
+	if (g == 0) return;
 	if (mCoolDownTimeForFiring < mMaxCoolDownTime) return;
-mCoolDownTimeForFiring = 0;
+	mCoolDownTimeForFiring = 0;
 
-//
-// Add your own stuff
-// Set the weapn velocity properly here
-// Use g->setVelocity
-/*
-g->setPosition(pos);
-// Set velocity here
-g->setSpeedFactor(1);
-g->setLife(5, 5);
-g->makeAlive();
-*/
+	// B.3
+	// Add your own stuff
+	// Set the weapn velocity properly here
+	Vector3 dir = direction;
+	dir.normalise();
+	g->setPosition(pos);
+	g->setVelocity(dir * mTargetRadius);
+	g->setSpeedFactor(1);
+	g->setLife(5, 5);
+	g->makeAlive();
 }
 
 void WEAPON_MANAGER::installWeaponWSManager(WeaponParticleSystemManager *wpsMgr)
