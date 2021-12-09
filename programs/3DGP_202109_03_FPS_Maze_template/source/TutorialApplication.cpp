@@ -84,15 +84,20 @@ bool BasicTutorial_00::keyPressed( const OIS::KeyEvent &arg )
 	}
 
 	if (arg.key == OIS::KC_Z) {
+		// C.4
 		mKeyPressedZoomMode= 1;
 		mCameraDistanceAdjustSpeed = 300;
 		mCameraDistanceSlowDownSpeed = 0;
+		mCameraDistance += mKeyPressedZoomMode * mCameraDistanceAdjustSpeed + mCameraDistanceSlowDownSpeed;
+		mCameraDistance = Math::Clamp(mCameraDistance, -1000.0f, 2000.0f);
 	}
 	if (arg.key == OIS::KC_X) {
+		// C.4
 		mKeyPressedZoomMode = -1;
 		mCameraDistanceAdjustSpeed = 300;
 		mCameraDistanceSlowDownSpeed = 0;
-
+		mCameraDistance += mKeyPressedZoomMode * mCameraDistanceAdjustSpeed + mCameraDistanceSlowDownSpeed;
+		mCameraDistance = Math::Clamp(mCameraDistance, -1000.0f, 2000.0f);
 	}
 	// B.1
 	if (arg.key == OIS::KC_F1) {
@@ -113,11 +118,13 @@ bool BasicTutorial_00::keyReleased( const OIS::KeyEvent &arg )
 		mKeyPressedZoomMode= 0;
 		mCameraDistanceAdjustSpeed = -mCameraDistanceAdjustSpeed;
 		mCameraDistanceSlowDownSpeed = -200;
+		mCameraDistance += mKeyPressedZoomMode * mCameraDistanceAdjustSpeed * mCameraDistanceSlowDownSpeed;
 	}
 	if (arg.key == OIS::KC_X) {
 		mKeyPressedZoomMode = 0;
 		mCameraDistanceAdjustSpeed = mCameraDistanceAdjustSpeed;
 		mCameraDistanceSlowDownSpeed = 200;
+		mCameraDistance += mKeyPressedZoomMode * mCameraDistanceAdjustSpeed * mCameraDistanceSlowDownSpeed;
 	}
 
 	if (arg.key == OIS::KC_W) {
@@ -145,12 +152,9 @@ void BasicTutorial_00::chooseSceneManager()
     /*mSceneMgrArr[0] = mRoot
 		->createSceneManager(
 	ST_GENERIC, "primary");*/
+	
+	// mSceneMgrArr[1] = mRoot->createSceneManager(ST_EXTERIOR_CLOSE, "secondary");
 
-	mSceneMgrArr[1] =mSceneMgrArr[0];
-	/*
-	mSceneMgrArr[1] = mRoot
-	->createSceneManager(ST_EXTERIOR_CLOSE, "secondary");
-*/
 	}
 
 void BasicTutorial_00::createCamera_00(void)
@@ -165,10 +169,13 @@ void BasicTutorial_00::createCamera_00(void)
 
 void BasicTutorial_00::createCamera_01(void)
 {
-	mSceneMgr = mSceneMgrArr[1];
-
-	//mCamera->setPosition(Ogre::Vector3(750,25800,750));
-
+	// C.1
+	mSceneMgr = mSceneMgrArr[0];
+	mCameraArr[1] = mSceneMgr->createCamera("SmallCam");
+	mCameraArr[1]->setPosition(Ogre::Vector3(0, 1000 + mCameraDistance, 1));
+	mCameraArr[1]->lookAt(Ogre::Vector3(0,0,0));
+	mCameraArr[1]->setNearClipDistance(5);
+	mCameraManArr[1] = new OgreBites::SdkCameraMan(mCamera);
 }
 
 
@@ -186,8 +193,14 @@ void BasicTutorial_00::createViewport_00(void)
 
 void BasicTutorial_00::createViewport_01(void)
 {
-
-	// vp->setVisibilityMask(0x10);
+	// C.2, C.5
+	Viewport* vp = mWindow->addViewport(mCameraArr[1], 1, 0.75, 0, 0.25, 0.5);
+	vp->setOverlaysEnabled(false);
+	vp->setBackgroundColour(Ogre::ColourValue(1,0,0));
+	vp->setVisibilityMask(0x10);
+	mCameraArr[1]->setAspectRatio(
+		Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
+	mViewportArr[1] = vp;
 }
 
 
@@ -466,9 +479,11 @@ bool BasicTutorial_00::frameStarted(const Ogre::FrameEvent& evt)
 	Vector3 cpos = mMainChar->getPosition();
 	
     // A.18, set spotlight's pos
-    //mCameraArr[1]->setPosition(cpos + Vector3(0, 1000 + mCameraDistance, 0));
 	Vector3 lightPos = mLight0->getPosition();
 	mLight0->setPosition(cpos.x, lightPos.y, cpos.z + 250);
+	
+	// C.4
+	mCameraArr[1]->setPosition(Vector3(cpos.x, 1000 + mCameraDistance, cpos.z));
 	
 	mMainChar->update(evt);
 	
