@@ -192,8 +192,7 @@ int DATA_READER::getMaxMonstersNum()
 
 double DATA_READER::getMeshScale()
 {
-    //return mMeshInfo.mMeshScale;
-    return 1;
+    return mMeshInfo.mMeshScale;
 }
 double DATA_READER::getWaterCoord_Y()
 {
@@ -203,6 +202,12 @@ double DATA_READER::getWaterCoord_Y()
 std::string DATA_READER::getWaterMaterialName()
 {
     return mWaterMaterialName;
+}
+
+// A.17
+double DATA_READER::getDegreeCorrection()
+{
+    return mMeshInfo.mDegreeCorrection;
 }
 
 std::string DATA_READER::getMeshName()

@@ -47,7 +47,7 @@ mScoreCoord_X = mScoreCoord_MinX;
 bool BasicTutorial_00::mouseMoved( const OIS::MouseEvent &arg )
 {
 	bool flg = BaseApplication::mouseMoved(arg);
-	//mMainChar->updateViewDirection();
+	mMainChar->updateViewDirection();
 	return flg;
 }
 
@@ -129,13 +129,13 @@ void BasicTutorial_00::chooseSceneManager()
 	//ST_EXTERIOR_FAR
 	//mSceneMgrArr[0] = mRoot
 	//	->createSceneManager(ST_EXTERIOR_CLOSE, "primary");
-	//mSceneMgrArr[0] = mRoot
-	//	->createSceneManager(
-	//ST_EXTERIOR_CLOSE, "primary");
-
-    mSceneMgrArr[0] = mRoot
+	mSceneMgrArr[0] = mRoot
 		->createSceneManager(
-	ST_GENERIC, "primary");
+	ST_EXTERIOR_CLOSE, "primary");
+
+    /*mSceneMgrArr[0] = mRoot
+		->createSceneManager(
+	ST_GENERIC, "primary");*/
 
 	mSceneMgrArr[1] =mSceneMgrArr[0];
 	/*
@@ -167,17 +167,18 @@ void BasicTutorial_00::createCamera_01(void)
 void BasicTutorial_00::createViewport_00(void)
 {
 	mCamera = mCameraArr[0];
-	Ogre::Viewport* vp = mWindow->addViewport(mCamera, 0, 0.25, 0.25);
+	Ogre::Viewport* vp = mWindow->addViewport(mCameraArr[0], 0);
 	vp->setBackgroundColour(Ogre::ColourValue(0,0,1));
 	mCamera->setAspectRatio(
 		Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
-	//vp->setVisibilityMask(0x01);
+	mViewportArr[0] = vp;
+	vp->setVisibilityMask(0x01);
 }
 
 void BasicTutorial_00::createViewport_01(void)
 {
 
-//	vp->setVisibilityMask(0x10);
+	// vp->setVisibilityMask(0x10);
 }
 
 
@@ -185,7 +186,8 @@ void BasicTutorial_00::createWaterSurface()
 {
     	Plane plane(Vector3::UNIT_Y, 0); 
 	MeshManager::getSingleton().createPlane(
-		"ground", 						ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+		"ground",
+		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
 		plane, 
 		15000,15000, 	// width, height
 		20,20, 		// x- and y-segments
@@ -195,32 +197,33 @@ void BasicTutorial_00::createWaterSurface()
 		Vector3::UNIT_Z	// upward vector
 		); 
 
-	Entity *ent = mSceneMgr->createEntity(
-		"GroundEntity", "ground"); 
+	Entity *ent = mSceneMgr->createEntity("GroundEntity", "ground"); 
 	//ent->setMaterialName("Examples/BeachStones");
 	//ent->setMaterialName("Examples/WaterStream");
 
-	//ent->setMaterialName(DATA_READER::getWaterMaterialName());
-	//Vector3 waterCoordY;
-	//waterCoordY.y = DATA_READER::getWaterCoord_Y();
-
-    //
-    // Add your own stuff to create a large plane
-    //
+	// A.7, Create a plane
+	ent->setMaterialName(DATA_READER::getWaterMaterialName());
+	Vector3 waterCoordY;
+	waterCoordY.y = DATA_READER::getWaterCoord_Y();
+	ent->setCastShadows(false);
+	mSceneMgr->getRootSceneNode()->createChildSceneNode("ground")->attachObject(ent);
 }
 
 void BasicTutorial_00::createLights()
-    {
-        Light *light;
+{
+	// A.4, ambient light
+	mSceneMgr = mSceneMgrArr[0];
+	mSceneMgr->setAmbientLight(ColourValue(1, 1, 1));
+
+	// A.4, spot light
+    Light *light;
 	light = mSceneMgr->createLight("Light1"); 
-	light->setType(Light::LT_POINT);
-	//light->setType(Light::LT_DIRECTIONAL);
+	light->setType(Light::LT_DIRECTIONAL);
 	light->setPosition(Vector3(0, 450, 250)); 
 	light->setDiffuseColour(1, 1, 1);		
 	light->setSpecularColour(1.0, 1.0, 1.0);	
 	light->setDirection(Vector3(1, 1, 1));
 	mLight0 = light;
-
 }
 
 void BasicTutorial_00::createParticleSystems()
@@ -271,15 +274,15 @@ void BasicTutorial_00::createLargeSphere()
 void BasicTutorial_00::createMapMesh()
 {
     mMapMesh = new SIMPLE_TERRAIN(mSceneMgr);
-		mMapMesh->setMaterial("Examples/Rockwall_Wingo");
-		mMapMesh->create();
-		//mMapMesh->translateSceneNode(10000, -300, 10000);
-		mMapMesh->translateSceneNode(0, -300, 0);
-		mMapMesh->dilateMapObstacles(2);
-        mMapMesh->computeNormalVectors( );
-		mMapMesh->scanMapForLocatingObjects();
+	mMapMesh->setMaterial("Examples/Rockwall_Wingo");
+	mMapMesh->create();
+	//mMapMesh->translateSceneNode(10000, -300, 10000);
+	mMapMesh->translateSceneNode(0, -300, 0);
+	mMapMesh->dilateMapObstacles(2);
+    mMapMesh->computeNormalVectors( );
+	mMapMesh->scanMapForLocatingObjects();
 
-        MAP_MANAGER::installMeshMapManager(mMapMesh);
+    MAP_MANAGER::installMeshMapManager(mMapMesh);
 }
 
 void BasicTutorial_00::createAvatar()
@@ -289,7 +292,7 @@ void BasicTutorial_00::createAvatar()
     mMainChar->createGameObj("avatar", DATA_READER::getAvatarMeshName());
     mMainChar->setEyePosition_Y(DATA_READER::getAvatarEyePosition_Y());
 
-    //mMainChar->setVisibilityFlags(0x10);
+    mMainChar->setVisibilityFlags(0x10);
 
 	mMainChar->attachCamera(mCameraArr[0]);
 
@@ -297,19 +300,19 @@ void BasicTutorial_00::createAvatar()
     mMainChar->setWalkingMaxSpeed_Modifier(DATA_READER::getAvatarWalkingMaxSpeed());
 
     Vector3 start_pos;
-		mMapMesh->getStartingPosition(start_pos);
-		//mMainChar->setPosition(start_pos);
-        mMainChar->setPosition_to_Environment(start_pos);
+	mMapMesh->getStartingPosition(start_pos);
+	mMainChar->setPosition(start_pos);
+    mMainChar->setPosition_to_Environment(start_pos);
 
-        mMainChar->installWeaponWSManager(mWeaponPSMgr);
+    mMainChar->installWeaponWSManager(mWeaponPSMgr);
 }
 
 void BasicTutorial_00::createMonsterManager()
 {
     mMonsterMgr = new MONSTER_MANAGER(mSceneMgrArr[0]);
 
-mMonsterMgr->setTargetForMonsters(mMainChar);
-mMonsterMgr->setMaxMonstersNum(DATA_READER::getMaxMonstersNum());
+	mMonsterMgr->setTargetForMonsters(mMainChar);
+	mMonsterMgr->setMaxMonstersNum(DATA_READER::getMaxMonstersNum());
 }
 
 void BasicTutorial_00::createStatusBars() {
@@ -348,44 +351,36 @@ void BasicTutorial_00::createScene_00(void)
     //
 	ColourValue fadeColour(0.9, 0.9, 0.9); 
 
-    //
-    // Load a terrain here
-    //
-	//mSceneMgr->setWorldGeometry("terrain.cfg"); 
+    // A.6, Load a terrain here
+	mSceneMgr->setWorldGeometry("terrain.cfg"); 
 	/*
 	This line should put before SetWorldGeometry
 	*/
 
-    //
-    // Enable fog?
-    //
-	//if (DATA_READER::isEnabledExpFog()) {
-	//	Real density = DATA_READER::getExpFogDensity();
-	//	mSceneMgr->setFog(FOG_EXP, fadeColour, density); 
-	//}
-
-    //
-    // Create a skybox here
-    //
-	if (DATA_READER::isEnabledShadow()) {
-		mSceneMgr->setShadowTechnique(
-			SHADOWTYPE_TEXTURE_MODULATIVE);
-			//SHADOWTYPE_TEXTURE_ADDITIVE);
-		//SHADOWTYPE_STENCIL_MODULATIVE);
+    // A.5, Enable fog
+	if (DATA_READER::isEnabledExpFog()) {
+		Real density = DATA_READER::getExpFogDensity();
+		mSceneMgr->setFog(FOG_EXP, fadeColour, density); 
 	}
 
-	// 
+    // A.6, Create a skybox here
+	if (DATA_READER::isEnabledShadow()) {
+		mSceneMgr->setShadowTechnique(SHADOWTYPE_TEXTURE_MODULATIVE);
+			//SHADOWTYPE_TEXTURE_ADDITIVE);
+		mSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox");
+		mSceneMgr->setShadowTechnique(SHADOWTYPE_STENCIL_MODULATIVE);
+	}
 	
 //mSceneMgr->setAmbientLight( ColourValue( 0.7, 0.7, 0.7 ) ); 
 	//mSceneMgr->setAmbientLight( ColourValue( 1, 1, 1 ) );  
 
     Ogre::LogManager::getSingletonPtr()->logMessage("*** DATA_READER::createLights() ***");
 
-createLights();
+	createLights();
 
-createParticleSystems();
+	createParticleSystems();
 
-createLargeSphere();
+	createLargeSphere();
 	
 	//
 
@@ -461,31 +456,29 @@ bool BasicTutorial_00::frameStarted(const Ogre::FrameEvent& evt)
 	
 	Vector3 cpos = mMainChar->getPosition();
 	
-    
+    // A.18, set spotlight's pos
     //mCameraArr[1]->setPosition(cpos + Vector3(0, 1000 + mCameraDistance, 0));
-	
+	Vector3 lightPos = mLight0->getPosition();
+	mLight0->setPosition(cpos.x, lightPos.y, cpos.z + 250);
 	
 	mMainChar->update(evt);
 	
-mMonsterMgr->update(evt);
+	mMonsterMgr->update(evt);
 
-if (mTurnOnParticleSystems) {
-mMonsterMgr->setParticleSystem(
-    mMainChar->getPosition(),
-    mNumParticleNodes,
-    mParticleNode
-    );
-}
+	if (mTurnOnParticleSystems) {
+		mMonsterMgr->setParticleSystem(
+			mMainChar->getPosition(),
+			mNumParticleNodes,
+			mParticleNode
+		);
+	}
 
-{
-    unsigned int mode =  mMainChar->getActionMode();
-}
+	{
+		unsigned int mode =  mMainChar->getActionMode();
+	}
 
-
-
-
-mLevel = mMainChar->getLevel();
-mDigitDialogue_Level->setScore(mLevel,0.05, 0.1);
+	mLevel = mMainChar->getLevel();
+	mDigitDialogue_Level->setScore(mLevel,0.05, 0.1);
 
 	return flg;
 }
@@ -508,8 +501,8 @@ void BasicTutorial_00::createCamera(void) {
 void BasicTutorial_00::createScene( void ) {
 	createScene_00();
 	createScene_01();
-	//mSceneMgr = mSceneMgrArr[0]; // active SceneManager
-	mSceneMgr = mSceneMgrArr[1]; // active SceneManager
+	mSceneMgr = mSceneMgrArr[0]; // active SceneManager
+	// mSceneMgr = mSceneMgrArr[1]; // active SceneManager
 }
 
 

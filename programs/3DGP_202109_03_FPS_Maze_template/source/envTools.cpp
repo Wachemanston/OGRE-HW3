@@ -51,12 +51,23 @@ bool clampToEnvironment(const Vector3& cur_pos, Real offset, Vector3& new_pos)
     // Handle up direction
 	updateRay.setDirection(-Vector3::NEGATIVE_UNIT_Y);
     // Add your own stuff
-	
+	raySceneQuery->setRay(updateRay);
+	qryResult = raySceneQuery->execute();
+	i = qryResult.begin();
+
+	i_y = 0.0;
+	new_pos = cur_pos;
+	if (i != qryResult.end() && i->worldFragment)
+	{
+		i_y = i->worldFragment->singleIntersection.y;
+
+		new_pos.y = i_y + offset;
+		flg = true;
+	}
+
 	return flg;
 }
 
-
-/*
 bool checkFireHitTarget_SceneObj_Intersect(const Vector3 &fire_d, const Vector3 &start_pos, const Vector3 &end_pos, SceneNode **hit_target, Vector3 &hit_target_pos, Vector3 &hit_target_world_pos, Real &hit_distance) 
 {
 #ifndef ENABLE_COLLISION_DETECTION
@@ -78,7 +89,7 @@ bool checkFireHitTarget_SceneObj_Intersect(const Vector3 &fire_d, const Vector3 
 		if (i->movable == NULL) continue;
 
 		*hit_target = i->movable->getParentSceneNode();
-		DEBUG_LOG_MSG_POINTER(*hit_target);
+		// DEBUG_LOG_MSG_POINTER(*hit_target);
 
 		if (i->movable->getQueryFlags() == FIREHIT_QUERY_MASK) {
 
@@ -127,7 +138,7 @@ bool checkFireHitTarget_SceneObj_Sphere(const Vector3 &fire_d, const Vector3 &st
 		if ((*i)->getQueryFlags() == FIREHIT_QUERY_MASK) {
 
 			*hit_target = (*i)->getParentSceneNode();
-			DEBUG_LOG_MSG_POINTER(*hit_target);
+			// DEBUG_LOG_MSG_POINTER(*hit_target);
 
 
 			Vector3 pos = (*hit_target)->getPosition();
@@ -231,4 +242,3 @@ bool checkFireHitTarget(const Vector3 &fire_d, const Vector3 &start_pos, const V
 	}
 	return flg_hit;
 }
-*/

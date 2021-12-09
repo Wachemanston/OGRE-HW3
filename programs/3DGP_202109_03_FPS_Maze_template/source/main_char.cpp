@@ -11,14 +11,14 @@ MAIN_CHAR::MAIN_CHAR()
 mDistanceOffsetToTerrain = 0;
 	mCamera = 0;
 	mVelocity = Vector3(1, 0, 0);
-mSpeedFactor = 100.0;
-mActionMode = ACTION_NONE;
-mEyePosition = Vector3(0,120, 0);
+	mSpeedFactor = 100.0;
+	mActionMode = ACTION_NONE;
+	mEyePosition = Vector3(0,120, 0);
 
-mFireActionMode = FIRE_ACTION_NONE;
-mWeaponMgr = 0;
-mTarget = 0; //null
-mCurBulletsNum = 0;
+	mFireActionMode = FIRE_ACTION_NONE;
+	mWeaponMgr = 0;
+	mTarget = 0; //null
+	mCurBulletsNum = 0;
 }
 
 MAIN_CHAR::MAIN_CHAR(SceneManager *a_SceneMgr) : GAME_OBJ(a_SceneMgr)
@@ -26,16 +26,16 @@ MAIN_CHAR::MAIN_CHAR(SceneManager *a_SceneMgr) : GAME_OBJ(a_SceneMgr)
     mDistanceOffsetToTerrain = 0;
 	mCamera = 0;
 	mVelocity = Vector3(1, 0, 0);
-mSpeedFactor = 100.0;
-mActionMode = ACTION_NONE;
-mEyePosition = Vector3(0,120, 0);
+	mSpeedFactor = 100.0;
+	mActionMode = ACTION_NONE;
+	mEyePosition = Vector3(0,120, 0);
 
-mFireActionMode = FIRE_ACTION_NONE;
+	mFireActionMode = FIRE_ACTION_NONE;
 
-mWeaponMgr = new WEAPON_MANAGER(mSceneMgr);
+	mWeaponMgr = new WEAPON_MANAGER(mSceneMgr);
 
-mTarget = 0; //null
-mCurBulletsNum = 0;
+	mTarget = 0; //null
+	mCurBulletsNum = 0;
 }
 
 void MAIN_CHAR::installWeaponWSManager(WeaponParticleSystemManager *wpsMgr)
@@ -75,17 +75,16 @@ void MAIN_CHAR::attachCamera(Camera *a_Camera)
 
 void MAIN_CHAR::updateViewDirection()
 {
-		Vector3 actualDirection;
-		actualDirection = mCamera->getRealDirection();
+	Vector3 actualDirection;
+	actualDirection = mCamera->getRealDirection();
 
-    // add your own stuff
+	// A.19 ??
+    mEyePosition = Vector3(0, 120, 0) + actualDirection;
 }
 
 void MAIN_CHAR::walkForward(const Ogre::FrameEvent& evt)
 {
-	//Vector3 actualDirection = mCamera->getRealDirection();
-	
-    Vector3 actualDirection = Vector3(1, 0, 0);
+	Vector3 actualDirection = mCamera->getRealDirection();
 
     Vector3 d;
 	d = actualDirection*mSpeedFactor*evt.timeSinceLastFrame
@@ -98,16 +97,28 @@ void MAIN_CHAR::walkForward(const Ogre::FrameEvent& evt)
 	mSceneNode->translate(d);
 
 	Vector3 pos = mSceneNode->getPosition();
-	//bool flg = projectScenePointOntoTerrain_PosDirection(pos);
-	//if (flg == false) {
-	//	projectScenePointOntoTerrain_NegDirection(pos);
-	//}
+	bool flg = projectScenePointOntoTerrain_PosDirection(pos);
+	if (flg == false) {
+		projectScenePointOntoTerrain_NegDirection(pos);
+	}
 	mSceneNode->setPosition(pos);
 }
 
 void MAIN_CHAR::walkBackward(const Ogre::FrameEvent& evt)
 {
-    // Add your own stuff
+	Vector3 actualDirection = mCamera->getRealDirection();
+
+    Vector3 d = -actualDirection*mSpeedFactor*evt.timeSinceLastFrame
+        *mSpeedFactor_Modifer;
+
+	mSceneNode->translate(d);
+
+	Vector3 pos = mSceneNode->getPosition();
+	bool flg = projectScenePointOntoTerrain_PosDirection(pos);
+	if (flg == false) {
+		projectScenePointOntoTerrain_NegDirection(pos);
+	}
+	mSceneNode->setPosition(pos);
 }
 
 void MAIN_CHAR::setPosition_to_Environment(const Vector3 &p)
@@ -141,59 +152,59 @@ void MAIN_CHAR::setWalkForward()
 {
 	mActionMode ^= ACTION_WALK_FORWARD;
 }
-	void MAIN_CHAR::unsetWalkBackward()
-	{
-	mActionMode ^= ACTION_WALK_BACKWARD;
+void MAIN_CHAR::unsetWalkBackward()
+{
+mActionMode ^= ACTION_WALK_BACKWARD;
 
-	}
+}
 
-	Vector3 MAIN_CHAR::getWeaponPosition() const
-	{
-		Vector3 p = mSceneNode->getPosition();
-		p += mEyePosition;
-		Vector3 d = mCamera->getRealDirection();
-		p += d*20;
-		return p;
-	}
+Vector3 MAIN_CHAR::getWeaponPosition() const
+{
+	Vector3 p = mSceneNode->getPosition();
+	p += mEyePosition;
+	Vector3 d = mCamera->getRealDirection();
+	p += d*20;
+	return p;
+}
 
-	void MAIN_CHAR::update(const Ogre::FrameEvent& evt)
-	{
-        Vector3 p0 = mSceneNode->getPosition();
-        ///////////////////////////////////////////
-		if (mActionMode & ACTION_WALK_FORWARD) {
-			walkForward(evt);
-		}
-				if (mActionMode & ACTION_WALK_BACKWARD) {
-			walkBackward(evt);
-		}
-		
-		fireWeapon();
-		updateWeapon(evt);
-		Real sf = 3.0;
-		//if (mAnimationState == 0) {
-			if (
-				(mActionMode & ACTION_WALK_FORWARD)
-				||
-				(mActionMode & ACTION_WALK_BACKWARD)
-				) {
-					mAnimationState = mEntity->getAnimationState("Walk");
-	mAnimationState->setLoop(true);
-	mAnimationState->setEnabled(true);
+void MAIN_CHAR::update(const Ogre::FrameEvent& evt)
+{
+    Vector3 p0 = mSceneNode->getPosition();
+    ///////////////////////////////////////////
 	if (mActionMode & ACTION_WALK_FORWARD) {
-	mAnimationState->addTime(evt.timeSinceLastFrame*sf);
+		walkForward(evt);
 	}
-	else {
-		mAnimationState->addTime(-evt.timeSinceLastFrame*sf);
+	if (mActionMode & ACTION_WALK_BACKWARD) {
+		walkBackward(evt);
 	}
-	} else {
-				mAnimationState = mEntity->getAnimationState("Idle");
-	mAnimationState->setLoop(true);
-	mAnimationState->setEnabled(true);
-	mAnimationState->addTime(evt.timeSinceLastFrame*sf);
-			}
-		//}
+		
+	fireWeapon();
+	updateWeapon(evt);
+	Real sf = 3.0;
+	if (mAnimationState == 0) {
+		if (
+			(mActionMode & ACTION_WALK_FORWARD)
+			||
+			(mActionMode & ACTION_WALK_BACKWARD)
+			) {
+				mAnimationState = mEntity->getAnimationState("Walk");
+				mAnimationState->setLoop(true);
+				mAnimationState->setEnabled(true);
+				if (mActionMode & ACTION_WALK_FORWARD) {
+					mAnimationState->addTime(evt.timeSinceLastFrame*sf);
+				}
+				else {
+					mAnimationState->addTime(-evt.timeSinceLastFrame*sf);
+				}
+		} else {
+			mAnimationState = mEntity->getAnimationState("Idle");
+			mAnimationState->setLoop(true);
+			mAnimationState->setEnabled(true);
+			mAnimationState->addTime(evt.timeSinceLastFrame*sf);
+		}
+	}
 
-Vector3 new_p;
+	Vector3 new_p;
 	Vector3 cur_p = mSceneNode->getPosition();
     Vector3 modified_p;
 	MAP_MANAGER::movePosition(p0, cur_p, modified_p);
@@ -201,28 +212,25 @@ Vector3 new_p;
 	clampToEnvironment(modified_p, 0.1, new_p);
     mSceneNode->setPosition(new_p);
 
-    //////////////////////////////////////////////
-    //Make the camera follow the main character.
+    // A.9, Make the camera follow the main character.
     Vector3 pos = new_p + mEyePosition;
     Vector3 actualDirection = mCamera->getDirection();
+    mCamera->setPosition(pos-actualDirection*5);
+	mCamera->lookAt(pos);
+}
 
-        //    mCamera->setPosition(pos-actualDirection*5);
-		//mCamera->lookAt(pos);
-            mCamera->lookAt(500,0,500);
-	}
-
-	void MAIN_CHAR::fireWeapon()
+void MAIN_CHAR::fireWeapon()
+{
+	Vector3 pos;
+	Vector3 direction;
+	if (mFireActionMode&FIRE_ACTION_NORMAL)
 	{
-		Vector3 pos;
-		Vector3 direction;
-		if (mFireActionMode&FIRE_ACTION_NORMAL)
-		{
-			//pos = getWeaponPosition();
-			//direction = mCamera->getRealDirection();
-			//mWeaponMgr->fire_Normal(pos, direction);
-		    //mFireActionMode ^= FIRE_ACTION_NORMAL;
-		}
+		//pos = getWeaponPosition();
+		//direction = mCamera->getRealDirection();
+		//mWeaponMgr->fire_Normal(pos, direction);
+		//mFireActionMode ^= FIRE_ACTION_NORMAL;
 	}
+}
 
 	void MAIN_CHAR::updateWeapon(const Ogre::FrameEvent& evt)
 	{

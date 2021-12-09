@@ -29,8 +29,8 @@ protected:
     static float mBulletSpeed;
 	static double mWaterCoord_Y;
 	static std::string mWaterMaterialName;
-	//static std::string mMeshName;
-    //static double mMeshScale;
+	static std::string mMeshName;
+    static double mMeshScale;
     static MESH_INFO mMeshInfo;
     //
     static std::string mAvatarMesh;
@@ -62,7 +62,7 @@ static std::string getSoundFileName_Explosion();
 static std::string getSoundFileName_Fire();
 static std::string getSoundFileName_Stamina();
 static std::string getSoundFileName_LevelUp();
-
+static double getDegreeCorrection();
 //
 static void report();
 };

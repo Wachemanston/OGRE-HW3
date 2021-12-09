@@ -47,8 +47,7 @@ bool projectScenePointOntoTerrain_PosDirection(Ogre::Vector3 &p)
 	sRaySceneQuery->setRay(Ray(p, Vector3(0, 1, 0)));
 	
 	// Perform the scene query
-	RaySceneQueryResult &result = 
-		sRaySceneQuery->execute();
+	RaySceneQueryResult &result = sRaySceneQuery->execute();
 	RaySceneQueryResult::iterator itr = result.begin();
 
 	bool flg = false;
@@ -57,7 +56,6 @@ bool projectScenePointOntoTerrain_PosDirection(Ogre::Vector3 &p)
 	if (itr != result.end() && itr->worldFragment)
 	{
 		p = itr->worldFragment->singleIntersection;
-		
 		flg = true;
 	}
 	return flg;
@@ -65,8 +63,22 @@ bool projectScenePointOntoTerrain_PosDirection(Ogre::Vector3 &p)
 
 bool projectScenePointOntoTerrain_NegDirection(Ogre::Vector3 &p)
 {
-    // Add your own stuff
-    return false;
+	//Ray mRay =sTrayMgr->getCursorRay(sCamera);
+	sRaySceneQuery->setRay(Ray(p, Vector3(0, -1, 0)));
+	
+	// Perform the scene query
+	RaySceneQueryResult &result = sRaySceneQuery->execute();
+	RaySceneQueryResult::iterator itr = result.begin();
+
+	bool flg = false;
+	// Get the results, set the camera height
+	// We are interested in the first intersection. It is ok to traverse all the results.
+	if (itr != result.end() && itr->worldFragment)
+	{
+		p = itr->worldFragment->singleIntersection;
+		flg = true;
+	}
+	return flg;
 }
 
 Ogre::SceneNode* initParticleSystemForExplosion(

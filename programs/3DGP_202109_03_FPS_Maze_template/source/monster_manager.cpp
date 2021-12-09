@@ -7,10 +7,10 @@ MONSTER_MANAGER::MONSTER_MANAGER(SceneManager *a_SceneMgr): GAME_OBJ(a_SceneMgr)
 {
 
 	mMonstersTarget = 0;
-	//mCurMonstersNum = mNumMonsters = 512;
-    //
-    //
+	mCurMonstersNum = mNumMonsters = 10; // 512;
+
     mCurMonstersNum = mNumMonsters = 10;
+	int range = 200;
 	for (int i = 0; i < mNumMonsters; ++i) 
 	{
 		mLifeStateArr[i] = true;
@@ -22,10 +22,10 @@ MONSTER_MANAGER::MONSTER_MANAGER(SceneManager *a_SceneMgr): GAME_OBJ(a_SceneMgr)
         // and current position of each monster
         // Set the scale.
         // Use 
-        //
-        // mMonstersArr[i]->setPosition( ... )
+
+        mMonstersArr[i]->setPosition(Vector3(Math::Floor(rand() % range), Math::Floor(rand() % range), Math::Floor(rand() % range)));
         // mMonstersArr[i]->setInitPosition( ... )
-        // mMonstersArr[i]->scale( sx, sy, sz )
+        mMonstersArr[i]->scale( 1, 1, 1 );
 
     }
 
@@ -65,15 +65,20 @@ void MONSTER_MANAGER::setTargetForMonsters(GAME_OBJ *a_Target)
 // The monsters should avoid collision with mMonstersTarget 
 void MONSTER_MANAGER::resolveMonsterTargetCollision()
 {
-	if (mMonstersTarget == 0) return;	
+	if (mMonstersTarget == 0) return;
+	int collision_range = 100;
+	int back_unit = 5;
     // For each monster, do
 	Vector3 p1 = mMonstersTarget->getPosition();
 	for (int i = 0; i < mCurMonstersNum; ++i) 
 	{
 		Vector3 p0 = mMonstersArr[i]->getPosition();
-        //
-        // Add your own stuff
-        //
+		// A.15, monster & player collision
+		if (p0.distance(p1) <= collision_range) {
+			Vector3 dir = p0 - p1;
+			dir.normalise();
+			mMonstersArr[i]->setPosition(p0 + dir * back_unit);
+		}
     }
 }
 
@@ -82,6 +87,8 @@ void MONSTER_MANAGER::resolveMonsterTargetCollision()
 //
 void MONSTER_MANAGER::resolveMonsterCollision()
 {
+	int collision_range = 50;
+	int back_unit = 5;
     // for each pair of monsters, do
 	for (int i = 0; i < mCurMonstersNum; ++i) 
 	{
@@ -89,7 +96,13 @@ void MONSTER_MANAGER::resolveMonsterCollision()
 		{
 			Vector3 p0 = mMonstersArr[i]->getPosition();
 			Vector3 p1 = mMonstersArr[j]->getPosition();
-            // Add your own stuff
+			// A.12, monster collision
+			if (p0.distance(p1) <= collision_range) {
+				Vector3 dir = p0 - p1;
+				dir.normalise();
+				mMonstersArr[i]->setPosition(p0 + dir * back_unit);
+				mMonstersArr[j]->setPosition(p0 - dir * back_unit);
+			}
         }
 	}
 }
@@ -125,26 +138,23 @@ void MONSTER_MANAGER::setParticleSystem(
     )
 {
     int particleCount = 0;
-    //for (int i = 0; i < mCurMonstersNum; ++i) 
-    for (int i = 0; i < 1; ++i) 
+	Real distance_threshold = 6400;
+    for (int i = 0; i < mCurMonstersNum; ++i)
 	{
 		Vector3 q = mMonstersArr[i]->getInitPosition();
         float d = pos.distance(q);
         if (particleCount >= numParticles) break;
-        if (d < 0) {
-            /*
+        if (d < distance_threshold) {
             particleNodes[particleCount]->setVisible(true);
             setOffParticleSystem(
                particleNodes[particleCount],
                "explosion",
                q);
             ++particleCount;
-            */
         }
     }
     for (int i = particleCount; i < numParticles; ++i )
     {
-            particleNodes[particleCount]->setVisible(false);
-
+        particleNodes[particleCount]->setVisible(false);
     }
 }

@@ -8,11 +8,11 @@
 /*!
 \brief 3D Game Programming
 \n
-My Name: AA BB CC
+My Name: Yu-Shu, Li
 \n
-My ID: 0123456789
+My ID: 310552024	
 \n
-My Email: aaa@cs.nctu.edu.tw
+My Email: yushuli.cs10@nycu.edu.tw
 
 This is an assignment of 3D Game Programming
 
@@ -87,6 +87,7 @@ private:
 	Ogre::Camera* mCameraArr[8];
 	Ogre::SceneManager* mSceneMgrArr[8];
 	OgreBites::SdkCameraMan* mCameraManArr[8];
+	Ogre::Viewport* mViewportArr[8];
 //
 	Real mSphereRadius;
 	int mKeyPressedZoomMode;
@@ -101,14 +102,14 @@ private:
     float mEnergy_Max;
 
     BAR_2D *mBar2D_Energy;
-BAR_2D *mBar2D_2_Speed;
+	BAR_2D *mBar2D_2_Speed;
 
-float mScoreCoord_X;
-float mScoreCoord_MaxX;
-float mScoreCoord_MinX;
-bool mScoreBoard_Direction;
-float mfScore;
-int mScore;
+	float mScoreCoord_X;
+	float mScoreCoord_MaxX;
+	float mScoreCoord_MinX;
+	bool mScoreBoard_Direction;
+	float mfScore;
+	int mScore;
 	DIGIT_STRING_DIALOGUE *mDigitDialogue;
     //
     int mLevel;
