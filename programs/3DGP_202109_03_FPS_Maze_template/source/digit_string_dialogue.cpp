@@ -21,6 +21,8 @@ DIGIT_STRING_DIALOGUE::DIGIT_STRING_DIALOGUE(SceneManager *s)
 	mSceneMgr = s;
 	mMaterialName = "Examples/Digits";
 	createObjs(mMaterialName);
+	offset = 0;
+	isMovingRight = true;
 }
 
 DIGIT_STRING_DIALOGUE::DIGIT_STRING_DIALOGUE(SceneManager *s, const String &a_Material_Name)
@@ -28,6 +30,8 @@ DIGIT_STRING_DIALOGUE::DIGIT_STRING_DIALOGUE(SceneManager *s, const String &a_Ma
 	mMaterialName = a_Material_Name;
 	mSceneMgr = s;
 	createObjs(mMaterialName);
+	offset = 0;
+	isMovingRight = true;
 }
 
 void DIGIT_STRING_DIALOGUE::createObjs(const String &a_Material_Name)
@@ -55,9 +59,14 @@ void DIGIT_STRING_DIALOGUE::createObjs(const String &a_Material_Name)
 	
 }
 
-/*
-	
-*/
+void DIGIT_STRING_DIALOGUE::update(const Ogre::FrameEvent& evt)
+{
+	// E.2
+	offset += isMovingRight ? 0.001 : -0.001;
+	if (offset < 0 || offset > 0.5) isMovingRight = !isMovingRight;
+	setScore(123, offset, 0.05);
+}
+
 void DIGIT_STRING_DIALOGUE::setScore(int score, Real x, Real y, Real dx, Real dy)
 {
 	

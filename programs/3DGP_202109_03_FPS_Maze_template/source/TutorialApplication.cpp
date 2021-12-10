@@ -504,6 +504,26 @@ bool BasicTutorial_00::frameStarted(const Ogre::FrameEvent& evt)
 	mLevel = mMainChar->getLevel();
 	mDigitDialogue_Level->setScore(mLevel,0.05, 0.1);
 
+	// E.2
+	mDigitDialogue->update(evt);
+
+	// E.3
+	int mode = mMainChar->getActionMode();
+	if (mode > 0 && mode <= 3) {
+		mEnergy = (mEnergy > mEnergy_Min) ? mEnergy - 0.4 : mEnergy_Min;
+	} else if (mEnergy < mEnergy_Max) {
+		mEnergy += 0.2;
+	}
+	mBar2D_Energy->setBarDimension(mEnergy / mEnergy_Max * 0.25, 0.03);
+	mBar2D_Energy->update(mCameraArr[0], 0.0, 0, 0);
+	
+	// E.4
+	float speed = (mEnergy > 0.0f) ? 10 * Math::Sqrt(mEnergy) : 0.0f;
+	float normalizedSpeed = speed / (10 * Math::Sqrt(mEnergy_Max));
+	mBar2D_2_Speed->setBarDimension(normalizedSpeed * 0.25, 0.03);
+	mBar2D_2_Speed->update(mCameraArr[0], 0.0, 0, 0);
+	mMainChar->setSpeedFactor(speed);
+
 	return flg;
 }
 

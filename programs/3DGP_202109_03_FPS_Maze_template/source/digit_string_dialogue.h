@@ -180,11 +180,14 @@ private:
 	SelectionRectangle *r[3];
 	FilledRectangle *fr[50];
 	void createObjs(const String &a_Material_Name);
+	Real offset;
+	bool isMovingRight;
 
 public:
 	DIGIT_STRING_DIALOGUE(SceneManager *s);
 	DIGIT_STRING_DIALOGUE(SceneManager *s, const String &a_Material_Name);
 	void setScore(int score, Real x = 0, Real y = 0, Real dx = 0.025, Real dy = 0.05);
+	void update(const Ogre::FrameEvent& evt);
 };
 
 #endif

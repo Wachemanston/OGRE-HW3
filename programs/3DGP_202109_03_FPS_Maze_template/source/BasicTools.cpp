@@ -121,8 +121,8 @@ void setVisibleParticleSystem(
     bool flg_show) 
 {
 	particleNode->setVisible(flg_show);
-	//MovableObject *s = particleNode->getAttachedObject(pname);
-	MovableObject *s = particleNode->getAttachedObject(0);
+	// E.1
+	MovableObject *s = particleNode->getAttachedObject(pname);
 	
     ParticleSystem* p =static_cast<ParticleSystem*>(s);
 	if (p == NULL) return;
