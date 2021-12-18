@@ -228,7 +228,8 @@ void BasicTutorial_00::createWaterSurface()
 	Vector3 waterCoordY;
 	waterCoordY.y = DATA_READER::getWaterCoord_Y();
 	ent->setCastShadows(false);
-	mSceneMgr->getRootSceneNode()->createChildSceneNode("ground")->attachObject(ent);
+	SceneNode* waterSurface = mSceneMgr->getRootSceneNode()->createChildSceneNode("ground", waterCoordY);
+	waterSurface->attachObject(ent);
 }
 
 void BasicTutorial_00::createLights()
@@ -240,7 +241,7 @@ void BasicTutorial_00::createLights()
 	// A.4, spot light
     Light *light;
 	light = mSceneMgr->createLight("Light1"); 
-	light->setType(Light::LT_DIRECTIONAL);
+	light->setType(Light::LT_SPOTLIGHT);
 	light->setPosition(Vector3(0, 450, 250)); 
 	light->setDiffuseColour(1, 1, 1);		
 	light->setSpecularColour(1.0, 1.0, 1.0);	
@@ -473,6 +474,9 @@ bool BasicTutorial_00::frameStarted(const Ogre::FrameEvent& evt)
 	Real dt = evt.timeSinceLastFrame;
 
 	mSN_Sphere->setPosition(pos);
+	static Real b = 0;
+	b += dt * 0.8;
+	pos.y += 90 * sin(b);
 
     mMainChar->getWeaponManager()->setTarget( pos, mSphereRadius );
 	
@@ -480,7 +484,8 @@ bool BasicTutorial_00::frameStarted(const Ogre::FrameEvent& evt)
 	
     // A.18, set spotlight's pos
 	Vector3 lightPos = mLight0->getPosition();
-	mLight0->setPosition(cpos.x, lightPos.y, cpos.z + 250);
+	// mLight0->setPosition(cpos.x, lightPos.y, cpos.z + 250);
+	mLight0->setPosition(cpos.x + Vector3(0, 450, 350));
 	
 	// C.4
 	mCameraArr[1]->setPosition(Vector3(cpos.x, 1000 + mCameraDistance, cpos.z));
@@ -510,9 +515,9 @@ bool BasicTutorial_00::frameStarted(const Ogre::FrameEvent& evt)
 	// E.3
 	int mode = mMainChar->getActionMode();
 	if (mode > 0 && mode <= 3) {
-		mEnergy = (mEnergy > mEnergy_Min) ? mEnergy - 0.4 : mEnergy_Min;
+		mEnergy = (mEnergy > mEnergy_Min) ? mEnergy : mEnergy_Min;
 	} else if (mEnergy < mEnergy_Max) {
-		mEnergy += 0.2;
+		mEnergy += 1;
 	}
 	mBar2D_Energy->setBarDimension(mEnergy / mEnergy_Max * 0.25, 0.03);
 	mBar2D_Energy->update(mCameraArr[0], 0.0, 0, 0);

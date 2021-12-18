@@ -101,7 +101,7 @@ void MAP_MANAGER::computePositionBasedOnMeshMapMgr(const Vector3 &p0, const Vect
 		p.y = p1.y;
 	}
 
-	p = p0;
+	// p = p0;
 	
 }
 

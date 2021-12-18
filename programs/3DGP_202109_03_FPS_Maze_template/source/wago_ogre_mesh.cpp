@@ -651,22 +651,23 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 	// A.20, Create walls based on bitmap
 	bgnVertex();
 	// bottom
-	for (j = 0; j < nz; j++) {
+	for (j = 0; j < nx; j++) {
 		z = j*dz;
 		flg_start = false;
-		for (i = 0; i < nx; i++) {
+		for (i = 0; i < nz; i++) {
 			x = i*dx;
-			if ((b->at(i, j) > 0.5) && !b->gr(i, j+1, 0.5)) {
+			if ((b->at(i, j) > 0.5) && !b->gr(i, j-1, 0.5)) {
 				//cout << "..." << endl;
 				if (flg_start) {
 					if (b->gr(i-1, j, 0.5)) continue;
 					if (i>=nx-1) {
-						v0 = Vector3(x+dx, 0, z+dz);
-						v3 = Vector3(x+dx, h, z+dz);
+						v0 = Vector3(x+dx, 0, z);
+						v3 = Vector3(x+dx, h, z);
 					} else {
-						v0 = Vector3(x, 0, z+dz);
-						v3 = Vector3(x, h, z+dz);
+						v0 = Vector3(x, 0, z);
+						v3 = Vector3(x, h, z);
 					}
+					cout << "(= " << v0 << ", " << v1 << ", " << v2 << ", " << v3 << " =)" << endl;
 					addVertex(v0.x, v0.y, v0.z, v0.x, 0, 0, 0, 1);
 					addVertex(v1.x, v1.y, v1.z, v1.x, 0, 0, 0, 1);
 					addVertex(v2.x, v2.y, v2.z, v2.x, h, 0, 0, 1);
@@ -674,19 +675,20 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 					flg_start = false;
 					nf++;
 				} else {
-					v1 = Vector3(x, 0, z+dz);
-					v2 = Vector3(x, h, z+dz);
+					v1 = Vector3(x, 0, z);
+					v2 = Vector3(x, h, z);
 					flg_start = true;
 				}
 			} else {
 				if (flg_start) {
 					if (i>=nx-1) {
-						v0 = Vector3(x+dx, 0, z+dz);
-						v3 = Vector3(x+dx, h, z+dz);
+						v0 = Vector3(x+dx, 0, z);
+						v3 = Vector3(x+dx, h, z);
 					} else {
-						v0 = Vector3(x, 0, z+dz);
-						v3 = Vector3(x, h, z+dz);
+						v0 = Vector3(x, 0, z);
+						v3 = Vector3(x, h, z);
 					}
+					cout << "(= " << v0 << ", " << v1 << ", " << v2 << ", " << v3 << " =)" << endl;
 					addVertex(v0.x, v0.y, v0.z, v0.x, 0, 0, 0, 1);
 					addVertex(v1.x, v1.y, v1.z, v1.x, 0, 0, 0, 1);
 					addVertex(v2.x, v2.y, v2.z, v2.x, h, 0, 0, 1);
@@ -705,10 +707,10 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 		flg_start = false;
 		for (i = 0; i < nx; i++) {
 			x = i*dx;
-			if ((b->at(i, j) > 0.5) && !b->gr(i, j-1, 0.5)) {
+			if ((b->at(i, j) > 0.5) && !b->gr(i, j+1, 0.5)) {
 				//cout << "..." << endl;
 				if (flg_start) {
-					if (b->gr(i+1, j, 0.5)) continue;
+					if (b->gr(i-1, j, 0.5)) continue;
 					if (i>=nx-1) {
 						v0 = Vector3(x+dx, 0, z);
 						v3 = Vector3(x+dx, h, z);
@@ -733,7 +735,7 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 						v0 = Vector3(x+dx, 0, z);
 						v3 = Vector3(x+dx, h, z);
 					} else {
-						v0 = Vector3(x, 0, z);
+						v0 = Vector3(x, 0,	z);
 						v3 = Vector3(x, h, z);
 					}
 					addVertex(v0.x, v0.y, v0.z, v0.x, 0, 0, 0, -1);
@@ -809,8 +811,8 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 				if (flg_start) {
 					if (b->gr(i, j+1, 0.5)) continue;
 					if (j>=nz-1) {
-						v0 = Vector3(x+dx, 0, z+dz);
-						v3 = Vector3(x+dx, h, z+dz);
+						v0 = Vector3(x+dx, 0, z+2*dz);
+						v3 = Vector3(x+dx, h, z+2*dz);
 					} else {
 						v0 = Vector3(x+dx, 0, z);
 						v3 = Vector3(x+dx, h, z);
@@ -831,8 +833,8 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 					//v0 = Vector3(x+dx, 0, z+dz);
 					//v3 = Vector3(x+dx, h, z+dz);
 					if (j>=nz-1) {
-						v0 = Vector3(x+dx, 0, z+dz);
-						v3 = Vector3(x+dx, h, z+dz);
+						v0 = Vector3(x+dx, 0, z+2*dz);
+						v3 = Vector3(x+dx, h, z+2*dz);
 					} else {
 						v0 = Vector3(x+dx, 0, z);
 						v3 = Vector3(x+dx, h, z);
@@ -931,7 +933,7 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 	float txt_f_x = 0.0035;
 	float txt_f_y = 0.01;
 	scaleTextureCoords(txt_f_x, txt_f_y);
-	translate(-dx*(nx-1)/2.0, 0, -dz*(nz-1)/2.0);
+	//translate(-dx*(nx-1)/2.0, 0, -dz*(nz-1)/2.0);
 	createMesh();
 }
 

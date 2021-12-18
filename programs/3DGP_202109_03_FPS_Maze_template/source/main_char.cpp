@@ -19,6 +19,7 @@ mDistanceOffsetToTerrain = 0;
 	mWeaponMgr = 0;
 	mTarget = 0; //null
 	mCurBulletsNum = 0;
+	mAnimationState = 0;
 }
 
 MAIN_CHAR::MAIN_CHAR(SceneManager *a_SceneMgr) : GAME_OBJ(a_SceneMgr)
@@ -36,6 +37,7 @@ MAIN_CHAR::MAIN_CHAR(SceneManager *a_SceneMgr) : GAME_OBJ(a_SceneMgr)
 
 	mTarget = 0; //null
 	mCurBulletsNum = 0;
+	mAnimationState = 0;
 }
 
 void MAIN_CHAR::installWeaponWSManager(WeaponParticleSystemManager *wpsMgr)
@@ -84,19 +86,23 @@ void MAIN_CHAR::updateViewDirection()
 
 void MAIN_CHAR::walkForward(const Ogre::FrameEvent& evt)
 {
+
 	Vector3 actualDirection = mCamera->getRealDirection();
+	actualDirection.y = 0.0;
 
     Vector3 d;
 	d = actualDirection*mSpeedFactor*evt.timeSinceLastFrame
         *mSpeedFactor_Modifer;
 
-	logMessage("Direction\n");
-	logMessage(actualDirection);
+	// logMessage("Direction\n");
+	// logMessage(actualDirection);
 
-	logMessage(d);
+	// logMessage(d);
 	mSceneNode->translate(d);
 
 	Vector3 pos = mSceneNode->getPosition();
+	mSceneNode->lookAt(pos + actualDirection * 10, Node::TS_WORLD);
+	mSceneNode->yaw(Radian(3.14159 * 0.5));
 	bool flg = projectScenePointOntoTerrain_PosDirection(pos);
 	if (flg == false) {
 		projectScenePointOntoTerrain_NegDirection(pos);
@@ -181,7 +187,8 @@ void MAIN_CHAR::update(const Ogre::FrameEvent& evt)
 	fireWeapon();
 	updateWeapon(evt);
 	Real sf = 3.0;
-	if (mAnimationState == 0) {
+	if (mAnimationState >= 0) {
+		
 		if (
 			(mActionMode & ACTION_WALK_FORWARD)
 			||
@@ -215,6 +222,7 @@ void MAIN_CHAR::update(const Ogre::FrameEvent& evt)
     // A.9, Make the camera follow the main character.
     Vector3 pos = new_p + mEyePosition;
     Vector3 actualDirection = mCamera->getDirection();
+	//mSceneNode->lookAt(pos-actualDirection*5, Node::TransformSpace::TS_WORLD);
     mCamera->setPosition(pos-actualDirection*5);
 	mCamera->lookAt(pos);
 }
