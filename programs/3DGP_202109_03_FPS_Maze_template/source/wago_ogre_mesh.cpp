@@ -688,7 +688,6 @@ void WAGO_OGRE_MESH_OBJ::createWallsBasedOnBitmap(
 						v0 = Vector3(x, 0, z);
 						v3 = Vector3(x, h, z);
 					}
-					cout << "(= " << v0 << ", " << v1 << ", " << v2 << ", " << v3 << " =)" << endl;
 					addVertex(v0.x, v0.y, v0.z, v0.x, 0, 0, 0, 1);
 					addVertex(v1.x, v1.y, v1.z, v1.x, 0, 0, 0, 1);
 					addVertex(v2.x, v2.y, v2.z, v2.x, h, 0, 0, 1);
